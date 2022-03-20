@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "259666410782",
+    "project_id": "realtimeseatreservation",
+    "storage_bucket": "realtimeseatreservation.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259666410782:android:e21a5d8a65edccf04a9d0f",
+        "android_client_info": {
+          "package_name": "kr.co.realtime_seat_reservation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259666410782-00dsnub1s59kgmm6vgnvvpbmocnp87du.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-QnBPkgcxerhsm_XT3NCh13LrQQPSbe8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259666410782-00dsnub1s59kgmm6vgnvvpbmocnp87du.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
