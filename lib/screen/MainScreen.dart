@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:realtime_seat_reservation/screen/BookedScreen.dart';
 import 'package:realtime_seat_reservation/screen/ReservScreen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -28,7 +29,12 @@ class _MainState extends State<MainScreen> {
                     child: Text('예약하기'),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BookedScreen()));
+                    },
                     child: Text('나의 에약'),
                   ),
                 ],

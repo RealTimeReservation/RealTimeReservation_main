@@ -3,9 +3,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:realtime_seat_reservation/cache/LoginCache.dart';
+import 'package:realtime_seat_reservation/dialog/GuildDialog.dart';
 import 'package:realtime_seat_reservation/dialog/ReservDialog.dart';
 import 'package:realtime_seat_reservation/model/ReadingRoomModel.dart';
 import 'package:realtime_seat_reservation/model/SeatModel.dart';
+import 'package:realtime_seat_reservation/util/StringUtil.dart';
 
 class SeatStatusWidget extends StatefulWidget {
   @override
@@ -16,6 +19,7 @@ class _SeatStatusState extends State<SeatStatusWidget> {
   List<ReadingRoomModel> readingRoomList = [];
   late ReadingRoomModel currentReadingRoom;
   bool isReadingRoomLoading = false;
+  bool isServerWriting = false;
 
   @override
   void initState() {
@@ -26,11 +30,15 @@ class _SeatStatusState extends State<SeatStatusWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
+      child: Stack(
         children: [
-          _ReadingRoomBar(),
-          _SeatStatusScreen(),
-          _SeatStatusGuideWidget(),
+          Column(
+            children: [
+              _ReadingRoomBar(),
+              _SeatStatusScreen(),
+              _SeatStatusGuideWidget(),
+            ],
+          ),
         ],
       ),
     );
@@ -193,7 +201,9 @@ class _SeatStatusState extends State<SeatStatusWidget> {
         width: width,
         height: width,
         child: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Color.fromRGBO(0, 112, 192, 1.0),
+          ),
         ),
       );
     }
@@ -221,7 +231,9 @@ class _SeatStatusState extends State<SeatStatusWidget> {
               width: width,
               height: width,
               child: Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: Color.fromRGBO(0, 112, 192, 1.0),
+                ),
               ),
             );
           }
@@ -241,9 +253,18 @@ class _SeatStatusState extends State<SeatStatusWidget> {
 
                 if (data['status'] == SeatModel.Seat_Empty) {
                   return InkWell(
-                    onTap: () {
-                      ReservDialog.show(context, data['status'],
-                          currentReadingRoom, data['number']);
+                    onTap: () async {
+                      bool result = await ReservDialog.show(
+                        context,
+                        data['status'],
+                        currentReadingRoom,
+                        data['number'],
+                      );
+
+                      if (result) {
+                        isServerWriting = true;
+                        writeReservation(document.id);
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
@@ -265,8 +286,12 @@ class _SeatStatusState extends State<SeatStatusWidget> {
                 } else if (data['status'] == SeatModel.Seat_Reserved) {
                   return InkWell(
                     onTap: () {
-                      ReservDialog.show(context, data['status'],
-                          currentReadingRoom, data['number']);
+                      ReservDialog.show(
+                        context,
+                        data['status'],
+                        currentReadingRoom,
+                        data['number'],
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
@@ -288,8 +313,12 @@ class _SeatStatusState extends State<SeatStatusWidget> {
                 } else if (data['status'] == SeatModel.Seat_Seating) {
                   return InkWell(
                     onTap: () {
-                      ReservDialog.show(context, data['status'],
-                          currentReadingRoom, data['number']);
+                      ReservDialog.show(
+                        context,
+                        data['status'],
+                        currentReadingRoom,
+                        data['number'],
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
@@ -493,5 +522,114 @@ class _SeatStatusState extends State<SeatStatusWidget> {
         ),
       ),
     );
+  }
+
+  Future<void> writeReservation(String seatUid) async {
+    CollectionReference col = FirebaseFirestore.instance
+        .collection('ReadingRoom')
+        .doc(currentReadingRoom.uid)
+        .collection('Seat')
+        .doc(seatUid)
+        .collection('Reservation');
+
+    DocumentReference seatDoc = FirebaseFirestore.instance
+        .collection('ReadingRoom')
+        .doc(currentReadingRoom.uid)
+        .collection('Seat')
+        .doc(seatUid);
+
+    CollectionReference userCol = FirebaseFirestore.instance
+        .collection('UserData')
+        .doc(LoginCache.uid)
+        .collection('Reservation');
+
+    bool hasReservation = false;
+    await Firebase.initializeApp();
+    await userCol.get().then((QuerySnapshot snapshot) {
+      if (snapshot.size != 0) {
+        hasReservation = true;
+      }
+    }).catchError((error) {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+        return;
+      });
+    }).timeout(Duration(seconds: 5), onTimeout: () {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+        return;
+      });
+    });
+
+    if (hasReservation) {
+      isServerWriting = false;
+      GuildDialog.show(context, '좌석예약', '이미 예약된 좌석이 있습니다.');
+      return;
+    }
+
+    await seatDoc
+        .update({
+          'status': SeatModel.Seat_Reserved,
+        })
+        .then((value) {})
+        .catchError((error) {
+          setState(() {
+            isServerWriting = false;
+            GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+            return;
+          });
+        })
+        .timeout(Duration(seconds: 5), onTimeout: () {
+          setState(() {
+            isServerWriting = false;
+            GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+            return;
+          });
+        });
+
+    late String reservation_id;
+    await col.add({
+      'reservated_user_id': LoginCache.uid,
+      'reservationed_time': StringUtil.DateToString(DateTime.now()),
+      'delay_count': 1,
+      'end_time': StringUtil.DateToString(DateTime.now()),
+    }).then((value) {
+      reservation_id = value.id;
+    }).catchError((error) {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+        return;
+      });
+    }).timeout(Duration(seconds: 5), onTimeout: () {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+        return;
+      });
+    });
+
+    await userCol.add({
+      'reading_room_id': currentReadingRoom.uid,
+      'seat_id': seatUid,
+      'reservation_id': reservation_id,
+    }).then((value) {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '좌석이 예약되었습니다.');
+      });
+    }).catchError((error) {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+      });
+    }).timeout(Duration(seconds: 5), onTimeout: () {
+      setState(() {
+        isServerWriting = false;
+        GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
+      });
+    });
   }
 }

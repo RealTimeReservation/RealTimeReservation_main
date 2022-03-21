@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:realtime_seat_reservation/model/ReadingRoomModel.dart';
 import 'package:realtime_seat_reservation/model/SeatModel.dart';
 
 class ReservDialog {
-  static void show(BuildContext context, String state,
-      ReadingRoomModel readingRoomModel, int seatNumber) {
+  static Future<bool> show(BuildContext context, String state,
+      ReadingRoomModel readingRoomModel, int seatNumber) async {
+    bool result = false;
+
     if (state == SeatModel.Seat_Empty) {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -46,6 +49,7 @@ class ReservDialog {
                   children: [
                     ElevatedButton(
                       onPressed: () {
+                        result = true;
                         Navigator.pop(context);
                       },
                       child: const Padding(
@@ -68,6 +72,7 @@ class ReservDialog {
                     ),
                     ElevatedButton(
                       onPressed: () {
+                        result = false;
                         Navigator.pop(context);
                       },
                       child: const Padding(
@@ -97,7 +102,7 @@ class ReservDialog {
         barrierDismissible: false,
       );
     } else if (state == SeatModel.Seat_Reserved) {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -137,6 +142,7 @@ class ReservDialog {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
+                          result = false;
                           Navigator.pop(context);
                         },
                         child: const Padding(
@@ -167,7 +173,7 @@ class ReservDialog {
         barrierDismissible: false,
       );
     } else if (state == SeatModel.Seat_Seating) {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -207,6 +213,7 @@ class ReservDialog {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
+                          result = false;
                           Navigator.pop(context);
                         },
                         child: const Padding(
@@ -237,5 +244,6 @@ class ReservDialog {
         barrierDismissible: false,
       );
     }
+    return result;
   }
 }
