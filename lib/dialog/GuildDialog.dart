@@ -11,9 +11,9 @@ class GuildDialog {
           ),
           title: Column(
             children: <Widget>[
-              new Text(
+              Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 18),

@@ -17,8 +17,8 @@ class ReservDialog {
               borderRadius: BorderRadius.circular(5),
             ),
             title: Column(
-              children: <Widget>[
-                new Text(
+              children: const <Widget>[
+                Text(
                   '좌석예약',
                   style: TextStyle(
                       color: Colors.black,
@@ -110,8 +110,8 @@ class ReservDialog {
               borderRadius: BorderRadius.circular(5),
             ),
             title: Column(
-              children: <Widget>[
-                new Text(
+              children: const <Widget>[
+                Text(
                   '좌석예약',
                   style: TextStyle(
                       color: Colors.black,
@@ -181,8 +181,8 @@ class ReservDialog {
               borderRadius: BorderRadius.circular(5),
             ),
             title: Column(
-              children: <Widget>[
-                new Text(
+              children: const <Widget>[
+                Text(
                   '좌석예약',
                   style: TextStyle(
                       color: Colors.black,

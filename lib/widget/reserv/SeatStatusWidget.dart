@@ -3,6 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:realtime_seat_reservation/cache/AppCache.dart';
 import 'package:realtime_seat_reservation/cache/LoginCache.dart';
 import 'package:realtime_seat_reservation/dialog/GuildDialog.dart';
 import 'package:realtime_seat_reservation/dialog/ReservDialog.dart';
@@ -572,6 +573,7 @@ class _SeatStatusState extends State<SeatStatusWidget> {
     await seatDoc
         .update({
           'status': SeatModel.Seat_Reserved,
+          'reservPublishedAt': DateTime.now().millisecondsSinceEpoch,
         })
         .then((value) {})
         .catchError((error) {
@@ -593,8 +595,10 @@ class _SeatStatusState extends State<SeatStatusWidget> {
     await col.add({
       'reservated_user_id': LoginCache.uid,
       'reservationed_time': StringUtil.DateToString(DateTime.now()),
-      'delay_count': 1,
+      'delay_count': 0,
       'end_time': StringUtil.DateToString(DateTime.now()),
+      'publishedAt': DateTime.now().millisecondsSinceEpoch,
+      'expiredAt': DateTime.now().millisecondsSinceEpoch,
     }).then((value) {
       reservation_id = value.id;
     }).catchError((error) {
