@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -28,11 +33,12 @@ class SplashScreen extends StatelessWidget {
                   Container(
                     alignment: Alignment.center,
                     child: Text(
-                      'L',
+                      'R',
                       style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 50),
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 50,
+                      ),
                     ),
                   )
                 ],
@@ -40,11 +46,22 @@ class SplashScreen extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 20),
                 child: Text(
-                  'Logo',
+                  'RSR',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                child: Text(
+                  'Realtime Seat Reservation',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
               )

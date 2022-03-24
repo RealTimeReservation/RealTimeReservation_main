@@ -368,8 +368,12 @@ class _SeatStatusState extends State<SeatStatusWidget> {
   }
 
   Widget _SeatStatusGuideWidget() {
+    Size screenSize = MediaQuery.of(context).size;
+    double width = screenSize.width;
+    double height = screenSize.height;
+
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 50, 20, 0),
+      margin: EdgeInsets.fromLTRB(20, height / 12, 20, 50),
       child: Column(
         children: [
           Row(
@@ -546,7 +550,11 @@ class _SeatStatusState extends State<SeatStatusWidget> {
 
     bool hasReservation = false;
     await Firebase.initializeApp();
-    await userCol.get().then((QuerySnapshot snapshot) {
+    await userCol
+        .where('expiredAt',
+            isGreaterThan: DateTime.now().millisecondsSinceEpoch)
+        .get()
+        .then((QuerySnapshot snapshot) {
       if (snapshot.size != 0) {
         hasReservation = true;
       }
@@ -598,7 +606,9 @@ class _SeatStatusState extends State<SeatStatusWidget> {
       'delay_count': 0,
       'end_time': StringUtil.DateToString(DateTime.now()),
       'publishedAt': DateTime.now().millisecondsSinceEpoch,
-      'expiredAt': DateTime.now().millisecondsSinceEpoch,
+      'expiredAt': DateTime.now().millisecondsSinceEpoch +
+          AppCache.basicPublishedAtExpriedTime,
+      'startAt': DateTime.now().millisecondsSinceEpoch,
     }).then((value) {
       reservation_id = value.id;
     }).catchError((error) {
@@ -619,6 +629,8 @@ class _SeatStatusState extends State<SeatStatusWidget> {
       'reading_room_id': currentReadingRoom.uid,
       'seat_id': seatUid,
       'reservation_id': reservation_id,
+      'expiredAt': DateTime.now().millisecondsSinceEpoch +
+          AppCache.basicPublishedAtExpriedTime,
     }).then((value) {
       setState(() {
         isServerWriting = false;

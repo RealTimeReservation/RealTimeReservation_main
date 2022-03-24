@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:realtime_seat_reservation/widget/reserv/SeatStatusWidget.dart';
 
 class ReservScreen extends StatefulWidget {
@@ -10,6 +11,10 @@ class ReservScreen extends StatefulWidget {
 class _ReservState extends State<ReservScreen> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -33,13 +38,12 @@ class _ReservState extends State<ReservScreen> {
         ),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            children: [
-              SeatStatusWidget(),
-            ],
-          ),
+      body: Container(
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            SeatStatusWidget(),
+          ],
         ),
       ),
     );

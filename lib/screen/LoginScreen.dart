@@ -9,12 +9,17 @@ import 'package:realtime_seat_reservation/widget/login/LoginWidget.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     Size screenSize = MediaQuery.of(context).size;
     double width = screenSize.width;
     double height = screenSize.height;
 
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),

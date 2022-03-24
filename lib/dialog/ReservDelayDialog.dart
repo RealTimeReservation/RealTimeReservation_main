@@ -6,7 +6,7 @@ import 'package:realtime_seat_reservation/util/StringUtil.dart';
 
 class ReservDelayDialog {
   static Future<bool> show(BuildContext context, String readingRoomName,
-      int seatNumber, int prevTime, int nextTime, int delayCount) async {
+      int seatNumber, String delayTime, int delayCount) async {
     bool result = false;
 
     await showDialog(
@@ -36,15 +36,11 @@ class ReservDelayDialog {
                     " - " +
                     seatNumber.toString() +
                     "번 좌석을\n연장하시겠습니까?\n" +
-                    StringUtil.DateToStringUntilHour(
-                        DateTime.fromMillisecondsSinceEpoch(prevTime)) +
-                    " -> " +
-                    StringUtil.DateToStringUntilHour(
-                        DateTime.fromMillisecondsSinceEpoch(nextTime)) +
+                    delayTime +
                     "\n" +
                     "(" +
                     delayCount.toString() +
-                    ")",
+                    "/3)",
                 style: TextStyle(color: Colors.black, fontSize: 16),
                 textAlign: TextAlign.center,
               ),

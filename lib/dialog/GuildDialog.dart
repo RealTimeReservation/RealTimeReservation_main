@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 class GuildDialog {
-  static void show(BuildContext context, String title, String content) {
-    showDialog(
+  static Future<bool> show(
+      BuildContext context, String title, String content) async {
+    bool result = true;
+
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -68,5 +71,6 @@ class GuildDialog {
       },
       barrierDismissible: false,
     );
+    return result;
   }
 }
