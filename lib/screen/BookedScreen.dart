@@ -80,23 +80,28 @@ class _BookedState extends State<BookedScreen> {
 
   String BookedTimer(BuildContext context) {
     int now = DateTime.now().millisecondsSinceEpoch;
-    int endtime =
+    int reserveEndTime =
         reservationModel.publishedAt + AppCache.basicPublishedAtExpriedTime;
-    int remainMin = 60 - ((endtime - now) / 1000).floor() ~/ 60;
+    int seatingEndTime = reservationModel.expiredAt;
+    int remainMin = 60 - ((reserveEndTime - now) / 1000).floor() ~/ 60;
     DateTime reserveTime =
         DateTime.fromMillisecondsSinceEpoch(reservationModel.publishedAt);
+    String current_ST = DateFormat("HH:mm").format(DateTime.now());
     String reserveTime_ST = DateFormat("HH:mm").format(reserveTime);
-    DateTime endTime_DT = DateTime.fromMillisecondsSinceEpoch(endtime);
+    DateTime endTime_DT = DateTime.fromMillisecondsSinceEpoch(seatingEndTime);
     String endTime_ST = DateFormat("HH:mm").format(endTime_DT);
 
-    if (now >= endtime) {
-      isOver = true;
-      return '좌석 시간이 만료되었습니다.';
-    }
-
     if (reservationModel.status == SeatModel.Seat_Seating) {
-      return '종료시간 ( $reserveTime_ST / $endTime_ST )';
+      if (now >= seatingEndTime) {
+        isOver = true;
+        return '좌석 시간이 만료되었습니다.';
+      }
+      return '종료시간 ( $current_ST / $endTime_ST )';
     } else if (reservationModel.status == SeatModel.Seat_Reserved) {
+      if (now >= reserveEndTime) {
+        isOver = true;
+        return '좌석 시간이 만료되었습니다.';
+      }
       return '예약한 시간 $reserveTime_ST \n 착석하기까지 남은 시간 ( $remainMin분 / 60분)';
     } else {
       return '예약된 정보가 없습니다.';
