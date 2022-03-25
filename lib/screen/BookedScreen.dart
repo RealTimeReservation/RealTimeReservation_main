@@ -89,7 +89,7 @@ class _BookedState extends State<BookedScreen> {
     DateTime endTime_DT = DateTime.fromMillisecondsSinceEpoch(endtime);
     String endTime_ST = DateFormat("HH:mm").format(endTime_DT);
 
-    if (now > endtime) {
+    if (now >= endtime) {
       isOver = true;
       return '좌석 시간이 만료되었습니다.';
     }
@@ -122,7 +122,6 @@ class _BookedState extends State<BookedScreen> {
         Duration(minutes: 1),
         builder: (context) {
           String text = BookedTimer(context);
-          if (text == 'OVER') {}
 
           return Container(
             child: Text(
