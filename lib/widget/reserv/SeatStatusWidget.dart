@@ -37,7 +37,6 @@ class _SeatStatusState extends State<SeatStatusWidget> {
             children: [
               _ReadingRoomBar(),
               _SeatStatusScreen(),
-              _SeatStatusGuideWidget(),
             ],
           ),
         ],
@@ -239,129 +238,184 @@ class _SeatStatusState extends State<SeatStatusWidget> {
             );
           }
 
+          List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
+
           return Container(
-            margin: EdgeInsets.fromLTRB(20, 50, 20, 20),
-            child: GridView.count(
-              crossAxisCount: 4,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-
-                if (data['status'] == SeatModel.Seat_Empty) {
-                  return InkWell(
-                    onTap: () async {
-                      bool result = await ReservDialog.show(
-                        context,
-                        data['status'],
-                        currentReadingRoom,
-                        data['number'],
-                      );
-
-                      if (result) {
-                        isServerWriting = true;
-                        writeReservation(document.id);
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Color.fromRGBO(112, 173, 71, 1.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          data['number'].toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                } else if (data['status'] == SeatModel.Seat_Reserved) {
-                  return InkWell(
-                    onTap: () {
-                      ReservDialog.show(
-                        context,
-                        data['status'],
-                        currentReadingRoom,
-                        data['number'],
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Color.fromRGBO(0, 112, 192, 1.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          data['number'].toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                } else if (data['status'] == SeatModel.Seat_Seating) {
-                  return InkWell(
-                    onTap: () {
-                      ReservDialog.show(
-                        context,
-                        data['status'],
-                        currentReadingRoom,
-                        data['number'],
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Color.fromRGBO(255, 55, 55, 1.0),
-                      ),
-                      child: Center(
-                        child: Text(
-                          data['number'].toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                return InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      color: Colors.grey,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'e',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+            margin: EdgeInsets.fromLTRB(30, 30, 30, 50),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    makeSeatBlock("pillar", null, 80, 50, 0, 0, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(0), 60, 40, 5, 40, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(1), 60, 40, 0, 1, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(2), 60, 40, 0, 5, 0, 0, 20),
+                    makeSeatBlock("pillar", null, 80, 50, 0, 0, 0, 0, 20),
+                    makeSeatBlock(
+                        "square", docs.elementAt(3), 60, 40, 5, 1, 0, 0, 20),
+                    makeSeatBlock(
+                        "square", docs.elementAt(4), 60, 40, 0, 20, 0, 0, 20),
+                    makeSeatBlock(
+                        "square", docs.elementAt(5), 60, 40, 0, 1, 0, 0, 20),
+                    makeSeatBlock(
+                        "square", docs.elementAt(6), 60, 40, 0, 20, 0, 0, 20),
+                    makeSeatBlock(
+                        "square", docs.elementAt(7), 60, 40, 0, 1, 0, 0, 20),
+                    makeSeatBlock(
+                        "square", docs.elementAt(8), 60, 40, 0, 5, 0, 0, 20),
+                    makeSeatBlock("pillar", null, 80, 50, 0, 0, 0, 0, 20),
+                  ],
+                ),
+                _SeatStatusGuideWidget(),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    makeSeatBlock("pillar", null, 80, 50, 0, 0, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(9), 80, 50, 5, 61, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(10), 80, 50, 0, 5, 0, 0, 20),
+                    makeSeatBlock("pillar", null, 80, 50, 0, 0, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(11), 80, 50, 5, 183, 0, 0, 20),
+                    makeSeatBlock(
+                        "circle", docs.elementAt(12), 80, 50, 0, 5, 0, 0, 20),
+                    makeSeatBlock("pillar", null, 80, 50, 0, 0, 0, 0, 20),
+                  ],
+                )
+              ],
             ),
           );
+
+          // return Container(
+          //   margin: EdgeInsets.fromLTRB(20, 50, 20, 20),
+          //   child: GridView.count(
+          //     crossAxisCount: 4,
+          //     mainAxisSpacing: 20,
+          //     crossAxisSpacing: 20,
+          //     scrollDirection: Axis.vertical,
+          //     shrinkWrap: true,
+          //     physics: NeverScrollableScrollPhysics(),
+          //     children: snapshot.data!.docs.map((DocumentSnapshot document) {
+          //       Map<String, dynamic> data =
+          //           document.data()! as Map<String, dynamic>;
+
+          //       if (data['status'] == SeatModel.Seat_Empty) {
+          //         return InkWell(
+          //           onTap: () async {
+          //             bool result = await ReservDialog.show(
+          //               context,
+          //               data['status'],
+          //               currentReadingRoom,
+          //               data['number'],
+          //             );
+
+          //             if (result) {
+          //               isServerWriting = true;
+          //               writeReservation(document.id);
+          //             }
+          //           },
+          //           child: Container(
+          //             padding: EdgeInsets.all(10),
+          //             decoration: const BoxDecoration(
+          //               color: Color.fromRGBO(112, 173, 71, 1.0),
+          //             ),
+          //             child: Center(
+          //               child: Text(
+          //                 data['number'].toString(),
+          //                 style: const TextStyle(
+          //                   color: Colors.white,
+          //                   fontWeight: FontWeight.bold,
+          //                   fontSize: 24,
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         );
+          //       } else if (data['status'] == SeatModel.Seat_Reserved) {
+          //         return InkWell(
+          //           onTap: () {
+          //             ReservDialog.show(
+          //               context,
+          //               data['status'],
+          //               currentReadingRoom,
+          //               data['number'],
+          //             );
+          //           },
+          //           child: Container(
+          //             padding: EdgeInsets.all(10),
+          //             decoration: const BoxDecoration(
+          //               color: Color.fromRGBO(0, 112, 192, 1.0),
+          //             ),
+          //             child: Center(
+          //               child: Text(
+          //                 data['number'].toString(),
+          //                 style: const TextStyle(
+          //                   color: Colors.white,
+          //                   fontWeight: FontWeight.bold,
+          //                   fontSize: 24,
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         );
+          //       } else if (data['status'] == SeatModel.Seat_Seating) {
+          //         return InkWell(
+          //           onTap: () {
+          //             ReservDialog.show(
+          //               context,
+          //               data['status'],
+          //               currentReadingRoom,
+          //               data['number'],
+          //             );
+          //           },
+          //           child: Container(
+          //             padding: EdgeInsets.all(10),
+          //             decoration: const BoxDecoration(
+          //               color: Color.fromRGBO(255, 55, 55, 1.0),
+          //             ),
+          //             child: Center(
+          //               child: Text(
+          //                 data['number'].toString(),
+          //                 style: const TextStyle(
+          //                   color: Colors.white,
+          //                   fontWeight: FontWeight.bold,
+          //                   fontSize: 24,
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         );
+          //       }
+
+          //       return InkWell(
+          //         onTap: () {},
+          //         child: Container(
+          //           padding: EdgeInsets.all(10),
+          //           decoration: const BoxDecoration(
+          //             color: Colors.grey,
+          //           ),
+          //           child: const Center(
+          //             child: Text(
+          //               'e',
+          //               style: TextStyle(
+          //                 color: Colors.white,
+          //                 fontWeight: FontWeight.bold,
+          //                 fontSize: 24,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       );
+          //     }).toList(),
+          //   ),
+          // );
         },
       ),
     );
@@ -375,6 +429,7 @@ class _SeatStatusState extends State<SeatStatusWidget> {
     return Container(
       margin: EdgeInsets.fromLTRB(20, height / 12, 20, 50),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -647,5 +702,346 @@ class _SeatStatusState extends State<SeatStatusWidget> {
         GuildDialog.show(context, '좌석예약', '서버 연결에 실패했습니다.');
       });
     });
+  }
+
+  Widget makeSeatBlock(
+      String type,
+      QueryDocumentSnapshot? doc,
+      double width,
+      double height,
+      double marginTop,
+      double marginBottom,
+      double marginLeft,
+      double marginRight,
+      double fontsize) {
+    if (type == "pillar") {
+      return Container(
+        width: width,
+        height: height,
+        margin: EdgeInsets.fromLTRB(
+          marginLeft,
+          marginTop,
+          marginRight,
+          marginBottom,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1,
+            color: Colors.black,
+          ),
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          child: Text(
+            "기둥",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: fontsize,
+            ),
+          ),
+        ),
+      );
+    } else if (type == "circle") {
+      Map<String, dynamic> data = doc!.data()! as Map<String, dynamic>;
+      if (data["status"] == SeatModel.Seat_Empty) {
+        return InkWell(
+          onTap: () async {
+            bool result = await ReservDialog.show(
+              context,
+              data["status"],
+              currentReadingRoom,
+              data["number"],
+            );
+
+            if (result) {
+              isServerWriting = true;
+              writeReservation(doc.id);
+            }
+          },
+          child: Container(
+            width: width,
+            height: height,
+            margin: EdgeInsets.fromLTRB(
+              marginLeft,
+              marginTop,
+              marginRight,
+              marginBottom,
+            ),
+            padding: EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(112, 173, 71, 1.0),
+              borderRadius: BorderRadius.all(
+                Radius.circular(100),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                data["number"].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontsize,
+                ),
+              ),
+            ),
+          ),
+        );
+      } else if (data["status"] == SeatModel.Seat_Reserved) {
+        return InkWell(
+          onTap: () {
+            ReservDialog.show(
+              context,
+              data["status"],
+              currentReadingRoom,
+              data["number"],
+            );
+          },
+          child: Container(
+            width: width,
+            height: height,
+            margin: EdgeInsets.fromLTRB(
+              marginLeft,
+              marginTop,
+              marginRight,
+              marginBottom,
+            ),
+            padding: EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(0, 112, 192, 1.0),
+              borderRadius: BorderRadius.all(
+                Radius.circular(100),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                data["number"].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontsize,
+                ),
+              ),
+            ),
+          ),
+        );
+      } else if (data["status"] == SeatModel.Seat_Seating) {
+        return InkWell(
+          onTap: () {
+            ReservDialog.show(
+              context,
+              data["status"],
+              currentReadingRoom,
+              data["number"],
+            );
+          },
+          child: Container(
+            width: width,
+            height: height,
+            margin: EdgeInsets.fromLTRB(
+              marginLeft,
+              marginTop,
+              marginRight,
+              marginBottom,
+            ),
+            padding: EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(255, 55, 55, 1.0),
+              borderRadius: BorderRadius.all(
+                Radius.circular(100),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                data["number"].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontsize,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      return InkWell(
+        onTap: () {},
+        child: Container(
+          width: width,
+          height: height,
+          margin: EdgeInsets.fromLTRB(
+            marginLeft,
+            marginTop,
+            marginRight,
+            marginBottom,
+          ),
+          padding: EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.all(
+              Radius.circular(100),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'e',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: fontsize,
+              ),
+            ),
+          ),
+        ),
+      );
+    } else if (type == "square") {
+      Map<String, dynamic> data = doc!.data()! as Map<String, dynamic>;
+      if (data["status"] == SeatModel.Seat_Empty) {
+        return InkWell(
+          onTap: () async {
+            bool result = await ReservDialog.show(
+              context,
+              data["status"],
+              currentReadingRoom,
+              data["number"],
+            );
+
+            if (result) {
+              isServerWriting = true;
+              writeReservation(doc.id);
+            }
+          },
+          child: Container(
+            width: width,
+            height: height,
+            margin: EdgeInsets.fromLTRB(
+              marginLeft,
+              marginTop,
+              marginRight,
+              marginBottom,
+            ),
+            padding: EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(112, 173, 71, 1.0),
+            ),
+            child: Center(
+              child: Text(
+                data["number"].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontsize,
+                ),
+              ),
+            ),
+          ),
+        );
+      } else if (data["status"] == SeatModel.Seat_Reserved) {
+        return InkWell(
+          onTap: () {
+            ReservDialog.show(
+              context,
+              data["status"],
+              currentReadingRoom,
+              data["number"],
+            );
+          },
+          child: Container(
+            width: width,
+            height: height,
+            margin: EdgeInsets.fromLTRB(
+              marginLeft,
+              marginTop,
+              marginRight,
+              marginBottom,
+            ),
+            padding: EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(0, 112, 192, 1.0),
+            ),
+            child: Center(
+              child: Text(
+                data["number"].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontsize,
+                ),
+              ),
+            ),
+          ),
+        );
+      } else if (data["status"] == SeatModel.Seat_Seating) {
+        return InkWell(
+          onTap: () {
+            ReservDialog.show(
+              context,
+              data["status"],
+              currentReadingRoom,
+              data["number"],
+            );
+          },
+          child: Container(
+            width: width,
+            height: height,
+            margin: EdgeInsets.fromLTRB(
+              marginLeft,
+              marginTop,
+              marginRight,
+              marginBottom,
+            ),
+            padding: EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(255, 55, 55, 1.0),
+            ),
+            child: Center(
+              child: Text(
+                data["number"].toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontsize,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      return InkWell(
+        onTap: () {},
+        child: Container(
+          width: width,
+          height: height,
+          margin: EdgeInsets.fromLTRB(
+            marginLeft,
+            marginTop,
+            marginRight,
+            marginBottom,
+          ),
+          padding: EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+            color: Colors.grey,
+          ),
+          child: Center(
+            child: Text(
+              'e',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: fontsize,
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        width: width,
+        height: height,
+      );
+    }
   }
 }
